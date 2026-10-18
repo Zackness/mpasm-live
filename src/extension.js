@@ -210,6 +210,7 @@ exports.activate=function(context) {
     'mpasm.build':build,'mpasm.configure':configure,'mpasm.newPractice':newPractice,
     'mpasm.selectMain':()=>selectMain(false),'mpasm.useActive':()=>selectMain(true),
     'mpasm.check':()=>request(vscode.window.activeTextEditor?.document),
+    'mpasm.flowchart':async()=>{const selected=target(vscode.window.activeTextEditor?.document);const doc=await vscode.workspace.openTextDocument(selected.uri);return require('./flowchart-panel').open(context,doc);},
     'mpasm.help':()=>vscode.commands.executeCommand('markdown.showPreview',vscode.Uri.joinPath(context.extensionUri,'README.md')),
     'mpasm.openHex':async()=>{const selected=target(vscode.window.activeTextEditor?.document),record=builds.get(key(selected.entry));if(!record || record.stale){vscode.window.showWarningMessage('Ensambla primero: no hay un HEX actualizado verificado en esta sesión.');return;}await vscode.commands.executeCommand('revealFileInOS',vscode.Uri.file(record.hex));}
   };

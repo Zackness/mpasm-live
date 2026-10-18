@@ -3,7 +3,7 @@
   "displayName": "MPASM Live — PIC Assembly",
   "description": "Ensamblador PIC clásico en VS Code: diagnósticos mientras escribes, prácticas y generación de HEX con MPASM.",
   "publisher": "local",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "license": "MIT",
   "repository": {"type":"git","url":"https://github.com/Zackness/mpasm-live.git"},
   "homepage": "https://github.com/Zackness/mpasm-live#readme",
@@ -48,7 +48,7 @@
   "scripts": {
     "test": "node --test test/*.test.js",
     "package": "vsce package --allow-missing-repository",
-    "check": "node --check src/core.js && node --check src/extension.js"
+    "check": "node --check src/core.js && node --check src/extension.js && node --check src/flowchart.js && node --check src/flowchart-panel.js"
   },
   "contributes": {
     "languages": [
@@ -78,6 +78,7 @@
       }
     ],
     "commands": [
+      {"command":"mpasm.flowchart","title":"MPASM: Generar diagrama de flujo","icon":"$(type-hierarchy-sub)"},
       {
         "command": "mpasm.build",
         "title": "MPASM: Ensamblar y generar HEX"
@@ -120,6 +121,7 @@
     ],
     "menus": {
       "editor/title": [
+        {"command":"mpasm.flowchart","when":"editorLangId == mpasm","group":"navigation"},
         {
           "command": "mpasm.build",
           "when": "editorLangId == mpasm",

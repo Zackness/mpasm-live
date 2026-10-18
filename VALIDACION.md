@@ -1,5 +1,11 @@
 # Validación de la versión 0.2.0
 
+## Actualización 0.3.0 — diagramas
+
+Se añadieron pruebas de skips (incluido GOTO de dos palabras), condiciones, llamadas/retornos, bucles, vectores ORG, destinos numéricos/relativos, macros e includes opacos, ensamblado condicional, agrupación y escape del SVG. El comando de generación se incluye en la prueba de integración con VS Code. Se genera además un diagrama de la práctica real sobre su texto, sin modificar la fuente.
+
+Las limitaciones de interpretación y la ausencia de certificación ISO se describen en README.md y en la propia vista.
+
 Fecha: 18 de octubre de 2026.
 
 ## Entorno comprobado

@@ -1,5 +1,15 @@
 # Historial
 
+## 0.3.0 — 2026-10-18
+
+- Diagrama de flujo del principal dentro de VS Code, sin ejecutar el ensamblador.
+- Vistas resumida y detallada, zoom, navegación a líneas y búsqueda por etiquetas.
+- Exportación SVG con símbolos basados en ISO 5807, sin afirmar certificación.
+- Interpretación de decisiones/skip PIC18, saltos, llamadas, retornos y vectores ORG.
+- Avisos explícitos para includes, macros, ensamblado condicional y destinos no resueltos.
+- Detección de diagrama desactualizado y bloqueo de navegación/exportación hasta actualizarlo.
+- Pruebas de flujo y prueba del comando en un host real de VS Code.
+
 ## 0.2.0 — 2026-10-18
 
 - Detección de MPASM y asistente con selección manual y acceso al instalador oficial.

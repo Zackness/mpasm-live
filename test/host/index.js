@@ -19,6 +19,8 @@ exports.run=async()=>{
     assert.equal(doc.languageId,'mpasm');results.push('ASM reconocido como MPASM');
     if(process.env.MPASM_HOST_RESTRICTED==='1') {
       assert.equal(vscode.workspace.isTrusted,false);
+      const chart=await vscode.commands.executeCommand('mpasm.flowchart');assert(chart.nodes>0);
+      results.push('Diagrama disponible sin ejecutar MPASM en modo restringido');
       await vscode.commands.executeCommand('mpasm.build');
       await sleep(1500);
       await assert.rejects(fs.access(path.join(root,'build')));
@@ -41,6 +43,9 @@ exports.run=async()=>{
     results.push('Diagnóstico desaparece al corregir');
     await vscode.commands.executeCommand('mpasm.build');assert((await fs.readFile(path.join(root,'build','principal.hex'),'ascii')).includes(':00000001FF'));
     results.push('Comando de ensamblado genera HEX');
+    const chart=await vscode.commands.executeCommand('mpasm.flowchart');assert(chart.nodes>0);assert(chart.edges>0);
+    results.push('Comando de diagrama crea la vista con bloques y conexiones');
+    await vscode.window.showTextDocument(doc);
     const includeUri=vscode.Uri.joinPath(folder.uri,'local.inc'),inc=await vscode.workspace.openTextDocument(includeUri);await vscode.window.showTextDocument(inc);
     const incEdit=new vscode.WorkspaceEdit();incEdit.replace(includeUri,new vscode.Range(0,0,inc.lineCount,0),'VALUE EQU NOT_DEFINED\n');await vscode.workspace.applyEdit(incEdit);
     await until(()=>vscode.languages.getDiagnostics(includeUri).some(d=>d.severity===vscode.DiagnosticSeverity.Error),'error en include');

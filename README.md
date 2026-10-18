@@ -35,6 +35,24 @@ Ejecuta **MPASM: Seleccionar archivo principal**, o **MPASM: Usar archivo activo
 
 La barra inferior muestra la revisión o ensamblado; al pulsarla abre la configuración de MPASM. «Código revisado» no significa que el HEX esté actualizado: vuelve a ensamblar después de modificar el programa.
 
+## Diagrama de flujo
+
+Abre tu ASM y ejecuta **MPASM: Generar diagrama de flujo** desde Ctrl+Shift+P o desde el botón del editor. Si configuraste un principal, se utiliza ese archivo, incluso con cambios sin guardar. No necesitas ejecutar MPASM para generar el diagrama.
+
+- **Resumida / detallada:** agrupa operaciones consecutivas o muestra las instrucciones por separado.
+- **Pulsa un bloque** para ir a su línea. El selector permite localizar etiquetas y subrutinas dentro del diagrama.
+- **Actualizar** reconstruye el diagrama después de modificar el código. Se bloquean la navegación y exportación de una vista desactualizada.
+- **Exportar SVG** guarda una imagen vectorial para tus informes. Puedes abrirla en un navegador o un editor compatible. Esta versión no exporta PDF directamente.
+- Los controles de zoom y ajuste de ancho permiten recorrer diagramas grandes.
+
+Los símbolos se basan en [ISO 5807:1985](https://www.iso.org/standard/11955.html): terminal para entradas/retornos, rectángulo de proceso, rombo de decisión y proceso predefinido para llamadas. No se afirma certificación ni conformidad completa. El color naranja y el borde discontinuo identifican casos no resueltos por nuestro analizador.
+
+Se interpretan saltos directos a etiquetas, bucles, decisiones PIC18, skips como BTFSC/BTFSS/DECFSZ, llamadas, retornos y segmentos ORG (incluidos los vectores 0, 8 y 18H). Una llamada tiene una conexión discontinua a la rutina y otra «Al regresar» a la continuación: no se garantiza que esa rutina llegue a retornar. Los retornos se muestran como salidas de rutina, no como fin de todo el programa.
+
+El diagrama representa **el archivo principal a nivel de fuente**, no el programa expandido ni su ejecución real. No expande macros, includes o ensamblado condicional. Los includes de usuario y las operaciones cuyo flujo no puede resolverse se muestran como bloques opacos, sin inventar su continuación. Los includes oficiales de dispositivo se omiten como declaraciones y se anotan. Los saltos calculados, expresiones complejas, datos en programa, SLEEP y ciertos formatos requieren revisión manual. El propio diagrama señala estas observaciones. No detecta errores de lógica ni verifica el circuito.
+
+Puedes probarlo con `examples/flowchart.asm` del repositorio. El análisis inicial está dirigido al PIC18F4550 con juego de instrucciones estándar; otros dispositivos y modos extendidos no están validados.
+
 ## Proteus y placa física
 
 En Proteus, configura **Program File** del PIC con el HEX de `build` y ajusta la frecuencia conforme al programa. Para una placa, carga ese HEX usando tu programador o bootloader habitual. La extensión no integra simulación, depuración paso a paso ni carga a la placa.
@@ -50,7 +68,7 @@ En Proteus, configura **Program File** del PIC con el HEX de `build` y ajusta la
 | `mpasm.delay` | Pausa entre 300 y 10000 ms. |
 | `mpasm.outputDirectory` | Subcarpeta de salida, por defecto build. |
 
-## Alcance de la versión 0.2
+## Alcance de la versión 0.3
 
 - Windows local con MPASM instalado; no funciona como ensamblador en macOS, Linux, WSL o VS Code web.
 - Programas absolutos de un principal y sus includes locales. No se enlazan módulos reubicables automáticamente.
