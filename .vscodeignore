@@ -1,0 +1,13 @@
+.git/**
+.github/**
+node_modules/**
+test/**
+scripts/**
+package-lock.json
+*.vsix
+.gitignore
+.gitattributes
+.test-output/**
+dist/**
+CONTRIBUTING.md
+SECURITY.md

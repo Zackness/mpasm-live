@@ -1,0 +1,6 @@
+{
+  "PIC18F4550 base":{"prefix":"pic18base","body":["        LIST P=18F4550","        #include <p18f4550.inc>","","; Configura oscilador, CONFIG y pines según tu placa.","        ORG 0x0000","        goto inicio","","inicio","        ${0:nop}","bucle","        bra bucle","        END"],"description":"Programa mínimo para comprobar MPASM, sin configurar hardware."},
+  "Bloque RAM":{"prefix":"cblock","body":["        CBLOCK ${1:0x20}","${2:contador}","        ENDC"]},
+  "Rutina":{"prefix":"rutina","body":["${1:nombre}","        ${0:nop}","        return"]},
+  "Macro":{"prefix":"macro","body":["${1:nombre} MACRO ${2:argumento}","        $0","        ENDM"]}
+}

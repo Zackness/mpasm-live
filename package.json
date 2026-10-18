@@ -1,0 +1,178 @@
+{
+  "name": "mpasm-live",
+  "displayName": "MPASM Live — PIC Assembly",
+  "description": "Ensamblador PIC clásico en VS Code: diagnósticos mientras escribes, prácticas y generación de HEX con MPASM.",
+  "publisher": "local",
+  "version": "0.2.0",
+  "license": "MIT",
+  "repository": {"type":"git","url":"https://github.com/Zackness/mpasm-live.git"},
+  "homepage": "https://github.com/Zackness/mpasm-live#readme",
+  "bugs": {"url":"https://github.com/Zackness/mpasm-live/issues"},
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Education",
+    "Snippets"
+  ],
+  "keywords": [
+    "PIC",
+    "PIC18F4550",
+    "MPASM",
+    "assembly",
+    "assembler"
+  ],
+  "main": "./src/extension.js",
+  "extensionKind": [
+    "workspace"
+  ],
+  "activationEvents": [
+    "onLanguage:mpasm",
+    "onStartupFinished"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "El resaltado funciona; ejecutar MPASM requiere confiar en la carpeta.",
+      "restrictedConfigurations": [
+        "mpasm.executable"
+      ]
+    },
+    "virtualWorkspaces": {
+      "supported": false,
+      "description": "MPASM necesita archivos locales y Windows."
+    }
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "package": "vsce package --allow-missing-repository",
+    "check": "node --check src/core.js && node --check src/extension.js"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "mpasm",
+        "aliases": [
+          "MPASM PIC"
+        ],
+        "extensions": [
+          ".asm",
+          ".inc"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "mpasm",
+        "scopeName": "source.mpasm",
+        "path": "./syntaxes/mpasm.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "mpasm",
+        "path": "./snippets/mpasm.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "mpasm.build",
+        "title": "MPASM: Ensamblar y generar HEX"
+      },
+      {
+        "command": "mpasm.configure",
+        "title": "MPASM: Configurar ensamblador"
+      },
+      {
+        "command": "mpasm.newPractice",
+        "title": "MPASM: Crear práctica PIC18F4550"
+      },
+      {
+        "command": "mpasm.selectMain",
+        "title": "MPASM: Seleccionar archivo principal"
+      },
+      {
+        "command": "mpasm.useActive",
+        "title": "MPASM: Usar archivo activo como principal"
+      },
+      {
+        "command": "mpasm.check",
+        "title": "MPASM: Revisar código ahora"
+      },
+      {
+        "command": "mpasm.openHex",
+        "title": "MPASM: Mostrar último HEX válido"
+      },
+      {
+        "command": "mpasm.help",
+        "title": "MPASM: Guía de inicio"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "mpasm.build",
+        "key": "ctrl+shift+b",
+        "when": "editorLangId == mpasm && isWorkspaceTrusted"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "mpasm.build",
+          "when": "editorLangId == mpasm",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "MPASM Live",
+      "properties": {
+        "mpasm.executable": {
+          "type": "string",
+          "default": "",
+          "scope": "machine",
+          "description": "Ruta a MPASMWIN.exe. Vacío: detección automática."
+        },
+        "mpasm.processor": {
+          "type": "string",
+          "scope": "resource",
+          "default": "18F4550",
+          "pattern": "^(?:PIC)?[0-9A-Za-z]+$",
+          "description": "Dispositivo de respaldo si LIST / PROCESSOR no lo especifica."
+        },
+        "mpasm.mainFile": {
+          "type": "string",
+          "default": "",
+          "scope": "resource",
+          "description": "Archivo principal relativo a la carpeta. Vacío: archivo ASM activo."
+        },
+        "mpasm.liveChecking": {
+          "type": "boolean",
+          "scope": "resource",
+          "default": true,
+          "description": "Revisar después de una pausa al escribir."
+        },
+        "mpasm.delay": {
+          "type": "number",
+          "scope": "resource",
+          "default": 900,
+          "minimum": 300,
+          "maximum": 10000,
+          "description": "Pausa antes de revisar, en milisegundos."
+        },
+        "mpasm.outputDirectory": {
+          "type": "string",
+          "default": "build",
+          "scope": "resource",
+          "description": "Carpeta de salida relativa al proyecto; no puede salir del proyecto."
+        }
+      }
+    }
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^4.0.0"
+  }
+}
