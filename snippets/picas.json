@@ -1,0 +1,5 @@
+{
+  "PIC18F4550 PIC-AS":{"prefix":"picas18base","description":"Base PIC-AS XC8. Configura los bits CONFIG y hardware según tu placa.","body":["    PROCESSOR 18F4550","    #include <xc.inc>","","    GLOBAL resetVec","    PSECT resetVec,class=CODE,reloc=2","resetVec:","    goto inicio","","    PSECT code","inicio:","    ${0:nop}","bucle:","    bra bucle","    END resetVec"]},
+  "PSECT de código":{"prefix":"psectcode","body":["    PSECT ${1:code},class=CODE,reloc=2","${2:etiqueta}:","    $0"]},
+  "Subrutina PIC-AS":{"prefix":"rutina","body":["${1:nombre}:","    ${0:nop}","    return"]}
+}

@@ -1,13 +1,18 @@
 {
   "name": "mpasm-live",
   "displayName": "MPASM Live — PIC Assembly",
-  "description": "Ensamblador PIC clásico en VS Code: diagnósticos mientras escribes, prácticas y generación de HEX con MPASM.",
+  "description": "PIC assembly in VS Code: MPASM and XC8 PIC-AS syntax, live diagnostics, HEX builds and flowcharts.",
   "publisher": "local",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "license": "MIT",
-  "repository": {"type":"git","url":"https://github.com/Zackness/mpasm-live.git"},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Zackness/mpasm-live.git"
+  },
   "homepage": "https://github.com/Zackness/mpasm-live#readme",
-  "bugs": {"url":"https://github.com/Zackness/mpasm-live/issues"},
+  "bugs": {
+    "url": "https://github.com/Zackness/mpasm-live/issues"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -30,14 +35,17 @@
   ],
   "activationEvents": [
     "onLanguage:mpasm",
-    "onStartupFinished"
+    "onStartupFinished",
+    "onLanguage:picas"
   ],
   "capabilities": {
     "untrustedWorkspaces": {
       "supported": "limited",
       "description": "El resaltado funciona; ejecutar MPASM requiere confiar en la carpeta.",
       "restrictedConfigurations": [
-        "mpasm.executable"
+        "mpasm.executable",
+        "picas.executable",
+        "picas.devicePack"
       ]
     },
     "virtualWorkspaces": {
@@ -48,7 +56,7 @@
   "scripts": {
     "test": "node --test test/*.test.js",
     "package": "vsce package --allow-missing-repository",
-    "check": "node --check src/core.js && node --check src/extension.js && node --check src/flowchart.js && node --check src/flowchart-panel.js"
+    "check": "node --check src/core.js && node --check src/extension.js && node --check src/flowchart.js && node --check src/flowchart-panel.js && node --check src/picas.js"
   },
   "contributes": {
     "languages": [
@@ -62,6 +70,18 @@
           ".inc"
         ],
         "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "picas",
+        "aliases": [
+          "PIC-AS (XC8)",
+          "picas"
+        ],
+        "extensions": [
+          ".s",
+          ".S"
+        ],
+        "configuration": "./language-configuration.json"
       }
     ],
     "grammars": [
@@ -69,19 +89,32 @@
         "language": "mpasm",
         "scopeName": "source.mpasm",
         "path": "./syntaxes/mpasm.json"
+      },
+      {
+        "language": "picas",
+        "scopeName": "source.picas",
+        "path": "./syntaxes/picas.json"
       }
     ],
     "snippets": [
       {
         "language": "mpasm",
         "path": "./snippets/mpasm.json"
+      },
+      {
+        "language": "picas",
+        "path": "./snippets/picas.json"
       }
     ],
     "commands": [
-      {"command":"mpasm.flowchart","title":"MPASM: Generar diagrama de flujo","icon":"$(type-hierarchy-sub)"},
+      {
+        "command": "mpasm.flowchart",
+        "title": "MPASM: Generar diagrama de flujo",
+        "icon": "$(type-hierarchy-sub)"
+      },
       {
         "command": "mpasm.build",
-        "title": "MPASM: Ensamblar y generar HEX"
+        "title": "PIC: Ensamblar y generar HEX (MPASM / PIC-AS)"
       },
       {
         "command": "mpasm.configure",
@@ -110,6 +143,22 @@
       {
         "command": "mpasm.help",
         "title": "MPASM: Guía de inicio"
+      },
+      {
+        "command": "picas.configure",
+        "title": "PIC-AS: Configurar XC8 y paquete del dispositivo"
+      },
+      {
+        "command": "picas.build",
+        "title": "PIC-AS: Ensamblar y generar HEX"
+      },
+      {
+        "command": "picas.associate",
+        "title": "PIC-AS: Activar colores para .s y .S en esta carpeta"
+      },
+      {
+        "command": "picas.newPractice",
+        "title": "PIC-AS: Crear práctica básica PIC18F4550"
       }
     ],
     "keybindings": [
@@ -121,10 +170,14 @@
     ],
     "menus": {
       "editor/title": [
-        {"command":"mpasm.flowchart","when":"editorLangId == mpasm","group":"navigation"},
+        {
+          "command": "mpasm.flowchart",
+          "when": "editorLangId == mpasm || editorLangId == picas",
+          "group": "navigation"
+        },
         {
           "command": "mpasm.build",
-          "when": "editorLangId == mpasm",
+          "when": "editorLangId == mpasm || editorLangId == picas",
           "group": "navigation"
         }
       ]
@@ -149,7 +202,7 @@
           "type": "string",
           "default": "",
           "scope": "resource",
-          "description": "Archivo principal relativo a la carpeta. Vacío: archivo ASM activo."
+          "description": "Archivo principal .asm/.s/.S relativo a la carpeta. Vacío: archivo activo."
         },
         "mpasm.liveChecking": {
           "type": "boolean",
@@ -170,11 +223,54 @@
           "default": "build",
           "scope": "resource",
           "description": "Carpeta de salida relativa al proyecto; no puede salir del proyecto."
+        },
+        "mpasm.toolchain": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "mpasm",
+            "picas"
+          ],
+          "default": "auto",
+          "scope": "resource",
+          "description": "Auto: .s/.S usa XC8 PIC-AS; .asm usa MPASM. Puedes elegir PIC-AS para fuentes .asm migradas."
+        },
+        "picas.executable": {
+          "type": "string",
+          "default": "",
+          "scope": "machine",
+          "description": "Ruta a pic-as.exe de XC8. Vacío: detectar la versión más reciente instalada."
+        },
+        "picas.devicePack": {
+          "type": "string",
+          "default": "",
+          "scope": "machine",
+          "description": "Carpeta xc8 de un Device Family Pack. Vacío: detectar el paquete instalado que contiene el PIC."
+        },
+        "picas.extraArgs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "scope": "resource",
+          "description": "Opciones adicionales de PIC-AS, por ejemplo -Wl,-presetVec=0h. No cambia el proyecto oficial de Microchip."
+        },
+        "picas.sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "scope": "resource",
+          "description": "Fuentes adicionales .s/.S/.asm, relativas a la carpeta, para enlazar. Vacío: solo el principal."
         }
       }
     }
   },
   "devDependencies": {
-    "@vscode/vsce": "^4.0.0"
+    "@vscode/vsce": "^4.0.0",
+    "vscode-oniguruma": "^2.0.1",
+    "vscode-textmate": "^9.3.2"
   }
 }

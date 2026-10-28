@@ -1,0 +1,20 @@
+{
+  "scopeName":"source.picas",
+  "patterns":[
+    {"name":"comment.line.semicolon.picas","match":";.*$"},
+    {"name":"comment.line.double-slash.picas","match":"//.*$"},
+    {"name":"comment.block.picas","begin":"/\\*","end":"\\*/"},
+    {"name":"meta.preprocessor.picas","begin":"^\\s*(#\\s*(?:include|define|undef|if|ifdef|ifndef|elif|else|endif|error|warning|pragma))\\b","beginCaptures":{"1":{"name":"keyword.control.directive.picas"}},"end":"$","patterns":[{"name":"comment.line.semicolon.picas","match":";.*$"},{"name":"string.quoted.double.picas","begin":"\"","end":"\""},{"name":"string.quoted.other.lt-gt.picas","begin":"<","end":">"},{"include":"#numbers"},{"name":"entity.name.constant.preprocessor.picas","match":"[A-Za-z_]\\w*"}]},
+    {"name":"string.quoted.double.picas","begin":"\"","end":"\"","patterns":[{"name":"constant.character.escape.picas","match":"\\\\."}]},
+    {"name":"constant.character.picas","match":"'(?:\\\\.|[^'\\r\\n])'"},
+    {"name":"entity.name.function.label.picas","match":"^\\s*[A-Za-z_?$][\\w?$]*(?=\\s*:)"},
+    {"name":"entity.name.constant.picas","match":"(?i)^\\s*[A-Za-z_]\\w*(?=\\s+(?:equ|set)\\b)"},
+    {"name":"keyword.control.picas","match":"(?i)\\b(?:addlw|addwf|addwfc|andlw|andwf|bc|bcf|bn|bnc|bnn|bnov|bnz|bov|bra|bsf|btfsc|btfss|btg|bz|call|clrf|clrwdt|comf|cpfseq|cpfsgt|cpfslt|daw|dcfsnz|decf|decfsz|goto|incf|incfsz|infsnz|iorlw|iorwf|lfsr|movf|movff|movlb|movlw|movwf|mullw|mulwf|negf|nop|pop|push|rcall|reset|retfie|retlw|return|rlcf|rlncf|rrcf|rrncf|setf|sleep|subfwb|sublw|subwf|subwfb|swapf|tblrd|tblwt|tstfsz|xorlw|xorwf|addfsr|addulnk|callw|movsf|movss|pushl|subfsr|subulnk|banksel|pagesel)\\b"},
+    {"name":"keyword.control.directive.picas","match":"(?i)\\b(?:processor|psect|config|org|end|equ|set|ds|res|db|dw|ddw|dqw|dt|global|extern|local|macro|endm|rept|endr|irp|irpc|if|ifdef|ifndef|else|endif|align|radix|list|error|warn|include|signat|fncall|fnroot|fnscope|dabs)\\b"},
+    {"name":"support.type.psect.picas","match":"(?i)\\b(?:class|space|delta|reloc|abs|ovrld|size|limit|split|keep|noexec|code|data|udata|bss)\\b"},
+    {"name":"support.variable.register.picas","match":"(?i)\\b(?:WREG|STATUS|BSR|PORT[A-G]|LAT[A-G]|TRIS[A-G]|ANSEL[A-G]?|ADCON[0-3]|ADRES[HL]|INTCON[0-3]?|RCON|OSCCON[0-3]?|T[0-9]CON[0-9]?|TMR[0-9][HL]?|PR[0-9]|PIR[0-9]|PIE[0-9]|IPR[0-9]|FSR[0-2][HL]?|INDF[0-2]|POSTINC[0-2]|POSTDEC[0-2]|PREINC[0-2]|PLUSW[0-2]|PCL|PCLATH|PCLATU|STKPTR|TOS[HLU]|PROD[HL]|TABLAT|TBLPTR[HLU]|ACCESS|BANKED|BANKMASK|PAGEMASK|HIGH|LOW|UPPER)\\b"},
+    {"include":"#numbers"},
+    {"name":"keyword.operator.picas","match":"<<|>>|[+*/%&|^~!=<>-]|\\$"}
+  ],
+  "repository":{"numbers":{"name":"constant.numeric.picas","match":"(?i)\\b(?:0x[0-9a-f]+|0b[01]+|[0-9][0-9a-f]*h|[0-9]+)\\b|\\.[0-9]+\\b|\\b[bdho]'[0-9a-f]+'"}}
+}

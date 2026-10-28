@@ -52,6 +52,24 @@ exports.run=async()=>{
     results.push('Include sin guardar revisado a través del principal y diagnóstico en su archivo');
     await vscode.commands.executeCommand('mpasm.build');await assert.rejects(fs.access(path.join(root,'build','principal.hex')));
     results.push('Ensamblado fallido retira el HEX anterior');
+    const picas=require('../../src/picas');
+    if(picas.discover() && picas.devicePack('18F4550')) {
+      const picUri=vscode.Uri.joinPath(folder.uri,'pic-test.s'),picSource=await fs.readFile(path.join(__dirname,'../../examples/picas.s'),'utf8');
+      await fs.writeFile(picUri.fsPath,picSource);
+      await vscode.workspace.getConfiguration('mpasm',folder.uri).update('mainFile','pic-test.s',vscode.ConfigurationTarget.WorkspaceFolder);
+      await vscode.workspace.getConfiguration('picas',folder.uri).update('extraArgs',['-Wl,-presetVec=0h'],vscode.ConfigurationTarget.WorkspaceFolder);
+      const picDoc=await vscode.workspace.openTextDocument(picUri);await vscode.window.showTextDocument(picDoc);assert.equal(picDoc.languageId,'picas');
+      results.push('Archivos .s reconocidos como PIC-AS');
+      const items=await vscode.commands.executeCommand('vscode.executeCompletionItemProvider',picUri,new vscode.Position(11,4));assert(items.items.some(i=>(typeof i.label==='string'?i.label:i.label.label)==='PSECT'));assert(items.items.some(i=>(typeof i.label==='string'?i.label:i.label.label)==='LATC'));
+      results.push('Autocompletado PIC-AS con PSECT y registros del DFP');
+      const bad=new vscode.WorkspaceEdit();bad.replace(picUri,new vscode.Range(0,0,picDoc.lineCount,0),picSource.replace('movlw 42','movlw MISSING_SYMBOL'));await vscode.workspace.applyEdit(bad);
+      await until(()=>vscode.languages.getDiagnostics(picUri).some(d=>d.source==='PIC-AS' && d.severity===vscode.DiagnosticSeverity.Error),'diagnóstico PIC-AS');assert(picDoc.isDirty);
+      const fix=new vscode.WorkspaceEdit();fix.replace(picUri,new vscode.Range(0,0,picDoc.lineCount,0),picSource);await vscode.workspace.applyEdit(fix);
+      await until(()=>!vscode.languages.getDiagnostics(picUri).some(d=>d.severity===vscode.DiagnosticSeverity.Error),'corrección PIC-AS');
+      results.push('Error PIC-AS sin guardar y desaparición al corregir');
+      await vscode.commands.executeCommand('picas.build');assert((await fs.readFile(path.join(root,'build','pic-test.hex'),'ascii')).includes(':00000001FF'));
+      results.push('PIC-AS ensambla y enlaza HEX desde VS Code');
+    }
     await fs.writeFile(report,JSON.stringify({success:true,results},null,2));
   }catch(error){await fs.writeFile(report,JSON.stringify({success:false,results,error:error.stack},null,2));throw error;}
 };

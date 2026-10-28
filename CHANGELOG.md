@@ -1,5 +1,16 @@
 # Historial
 
+## 0.4.0 — 2026-10-28
+
+- Lenguaje PIC-AS (XC8) para .s y .S, gramática TextMate y snippets propios.
+- Colores para directivas PSECT/PROCESSOR/CONFIG, preprocesador, registros, constantes y etiquetas.
+- Detección de XC8 PIC-AS y DFP por dispositivo, con selección manual.
+- Revisión sin guardar con PIC-AS y ensamblado/enlace independiente a HEX.
+- Fuentes adicionales y argumentos de enlace configurables; MPASM se conserva para .asm.
+- Autocompletado desde el include del dispositivo de XC8 y configuración de colores por carpeta.
+- Creación de práctica básica PIC-AS y pruebas reales con XC8 3.10.
+- Compatibilidad con la extensión oficial: no se modifican sus proyectos ni se intercepta Ctrl+Shift+B para PIC-AS.
+
 ## 0.3.0 — 2026-10-18
 
 - Diagrama de flujo del principal dentro de VS Code, sin ejecutar el ensamblador.

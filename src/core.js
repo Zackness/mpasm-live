@@ -47,7 +47,7 @@ async function snapshot(root, overlays, excluded='build') {
       if (entry.isDirectory()) {
         if (['.git','.vscode','node_modules','build','dist'].includes(entry.name) || within(path.join(root,excluded),source)) continue;
         await copy(source);
-      } else if (/\.(asm|inc)$/i.test(entry.name)) {
+      } else if (/\.(asm|s|inc|h)$/i.test(entry.name)) {
         const target=path.join(temp,rel); await fs.mkdir(path.dirname(target),{recursive:true});
         await fs.copyFile(source,target);
       }
@@ -55,7 +55,7 @@ async function snapshot(root, overlays, excluded='build') {
   }
   try {
     await copy(root);
-    for (const [file,text] of overlays) if (within(root,file) && /\.(asm|inc)$/i.test(file)) {
+    for (const [file,text] of overlays) if (within(root,file) && /\.(asm|s|inc|h)$/i.test(file)) {
       const target=path.join(temp,path.relative(root,file));
       await fs.mkdir(path.dirname(target),{recursive:true});
       await fs.writeFile(target,text,'utf8');

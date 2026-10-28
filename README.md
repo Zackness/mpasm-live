@@ -1,6 +1,26 @@
 # MPASM Live — PIC Assembly
 
-Escribe ensamblador PIC en VS Code y usa el MPASM clásico de Microchip para revisar el código mientras escribes y generar archivos HEX. Preparado y probado con PIC18F4550 y MPASM de MPLAB IDE 8.88 en Windows.
+Escribe ensamblador PIC en VS Code con colores, diagnósticos y generación de HEX mediante MPASM clásico o **PIC-AS de XC8**. Probado con PIC18F4550, MPASM 8.88 y XC8 PIC-AS 3.10 en Windows.
+
+## PIC-AS / XC8: archivos .s y .S
+
+La versión 0.4 añade el lenguaje **PIC-AS (XC8)**, con colores para instrucciones PIC, registros, etiquetas, números, comentarios, preprocesador y directivas como `PROCESSOR`, `PSECT`, `CONFIG`, `GLOBAL` y `BANKMASK`.
+
+1. Instala el VSIX actualizado y recarga la ventana de VS Code.
+2. Abre tu `.s` o `.S`. En la esquina inferior derecha debe aparecer **PIC-AS (XC8)**. Si aparece Texto sin formato u otro ensamblador, pulsa ahí y selecciona PIC-AS (XC8), o ejecuta **PIC-AS: Activar colores para .s y .S en esta carpeta**.
+3. Conserva las extensiones oficiales de Microchip para gestionar y construir el proyecto del profesor. El coloreado no cambia sus archivos de proyecto. Ctrl+Shift+B no se intercepta en el lenguaje PIC-AS.
+4. Opcionalmente ejecuta **PIC-AS: Configurar XC8 y paquete del dispositivo** para usar nuestro ensamblado independiente. Se detectan `pic-as.exe` y el DFP instalado en `.mchp_packs/Microchip`. Puedes seleccionar ambos manualmente.
+5. **PIC-AS: Ensamblar y generar HEX** ensambla y enlaza el principal en `build`. La revisión mientras escribes utiliza el modo de ensamblado `-c` y muestra diagnósticos de PIC-AS, diferenciados de MPASM.
+
+`mpasm.toolchain = auto` usa PIC-AS para .s/.S y MPASM para .asm. Para un .asm ya migrado puedes elegir `mpasm.toolchain = picas`. Los ajustes compartidos `mpasm.processor`, `mpasm.mainFile` y `mpasm.outputDirectory` también se usan con PIC-AS. `PROCESSOR` en la fuente prevalece sobre el dispositivo de respaldo.
+
+Los ajustes nuevos son `picas.executable` (ruta de pic-as.exe), `picas.devicePack` (carpeta **xc8** de un DFP), `picas.extraArgs` (opciones del compilador/enlazador) y `picas.sources` (fuentes adicionales explícitas). Por defecto solo se ensambla el principal: no se combinan todos los .s de la carpeta. La extensión procesa #include también en .s minúscula mediante `-xassembler-with-cpp`.
+
+**PIC-AS: Crear práctica básica PIC18F4550** genera una carpeta y un main.s con un ejemplo y sus opciones de enlace. También existe el snippet `picas18base` y el ejemplo `examples/picas.s`; este último usa `picas.extraArgs = ["-Wl,-presetVec=0h"]` para colocar su sección de reinicio en cero.
+
+Este modo independiente **no importa automáticamente** las configuraciones, flags, file sets, paquetes fijados o scripts de los proyectos MPLAB X / Microchip. Para reproducir exactamente la compilación de clase utiliza la extensión oficial, o configura explícitamente las fuentes y opciones necesarias. MPASM y PIC-AS tienen diferencias de sintaxis y de enlace: cambiar la extensión del archivo no convierte el programa.
+
+Los diagramas de la versión anterior siguen siendo análisis de fuente orientado a MPASM; no resuelven la colocación de PSECT ni el preprocesador de XC8. PIC-AS no añade simulación, programación de placas ni depuración a nuestra extensión. Los colores funcionan sin XC8 instalado; revisión y ensamblado requieren XC8 y soporte para el dispositivo.
 
 ## Instalar
 
@@ -26,7 +46,7 @@ Ejecuta **MPASM: Seleccionar archivo principal**, o **MPASM: Usar archivo activo
 ## Uso diario
 
 - Los diagnósticos aparecen después de 900 ms de pausa, sin guardar. Ctrl+Shift+M abre Problemas; pulsa un diagnóstico para ir a su archivo y línea, incluidos los `.inc` locales.
-- Ctrl+Shift+B, o **MPASM: Ensamblar y generar HEX**, guarda las fuentes abiertas de esa práctica y ensambla el principal.
+- En MPASM usa Ctrl+Shift+B; en PIC-AS usa **PIC-AS: Ensamblar y generar HEX**, o el comando compartido **PIC: Ensamblar y generar HEX (MPASM / PIC-AS)**. Se guardan las fuentes abiertas de esa práctica antes de ensamblar.
 - La salida se guarda en `build`: `ejemplo.asm` genera `build/ejemplo.hex`. Los archivos originales no reciben salidas del ensamblador.
 - **MPASM: Mostrar último HEX válido** abre su ubicación si fue generado en esta sesión y no hubo cambios posteriores detectados.
 - Si falla un ensamblado, se retira el HEX anterior de esa ruta de salida. No cargues copias antiguas que tengas en otra carpeta.
@@ -68,7 +88,7 @@ En Proteus, configura **Program File** del PIC con el HEX de `build` y ajusta la
 | `mpasm.delay` | Pausa entre 300 y 10000 ms. |
 | `mpasm.outputDirectory` | Subcarpeta de salida, por defecto build. |
 
-## Alcance de la versión 0.3
+## Alcance del modo MPASM
 
 - Windows local con MPASM instalado; no funciona como ensamblador en macOS, Linux, WSL o VS Code web.
 - Programas absolutos de un principal y sus includes locales. No se enlazan módulos reubicables automáticamente.

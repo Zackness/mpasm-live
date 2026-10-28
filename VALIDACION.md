@@ -1,5 +1,11 @@
 # Validación de la versión 0.2.0
 
+## Actualización 0.4.0 — XC8 PIC-AS
+
+Se verificaron XC8 PIC-AS 3.10 y PIC18Fxxxx_DFP 1.8.178 instalados en el equipo. Las pruebas cubren gramática TextMate con Oniguruma real (instrucciones, PSECT, #include, etiquetas, números y registros), parsing de diagnósticos, compilación de buffers sin guardar, generación y retirada de HEX. La integración en VS Code comprueba reconocimiento .s, autocompletado PSECT/LATC, errores sin guardar, corrección y comando de enlace. También se revisó una fuente real de clase sobre copia temporal, sin modificarla.
+
+En otros equipos pueden cambiar la versión de XC8, el dispositivo y el DFP. Los proyectos oficiales se siguen construyendo con Microchip; nuestra compilación independiente requiere configurar sus opciones y fuentes explícitamente.
+
 ## Actualización 0.3.0 — diagramas
 
 Se añadieron pruebas de skips (incluido GOTO de dos palabras), condiciones, llamadas/retornos, bucles, vectores ORG, destinos numéricos/relativos, macros e includes opacos, ensamblado condicional, agrupación y escape del SVG. El comando de generación se incluye en la prueba de integración con VS Code. Se genera además un diagrama de la práctica real sobre su texto, sin modificar la fuente.
